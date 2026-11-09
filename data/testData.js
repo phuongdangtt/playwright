@@ -10,6 +10,9 @@ export const globalData = {
 //Login page data
 export const loginData = {
   loginURL: globalData.baseUrl + '/login',
+  invalidUsername: 'invalid_' + globalData.username,
+  invalidPassword: 'invalid_' + globalData.password,
+  loginErrorMessage: 'Invalid username or password!'
 };
 
 // Bookstore page data

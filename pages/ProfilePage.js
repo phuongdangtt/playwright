@@ -58,4 +58,18 @@ export class ProfilePage extends BasePage {
       return false;
     }
   }
+
+  async getDisplayedUsername() {
+    const usernameLocator = this.page.locator(profileLocators.profileUsername);
+    await expect(usernameLocator).toBeVisible();
+    return await usernameLocator.textContent();
+  }
+
+  async verifyUsernameDisplayed(expectedUsername) {
+    const displayedUsername = await this.getDisplayedUsername();
+    if (displayedUsername.trim() !== expectedUsername) {
+      throw new Error(`Expected username to be "${expectedUsername}", but got "${displayedUsername.trim()}"`);
+    }
+    expect(displayedUsername.trim()).toBe(expectedUsername);
+  }
 }

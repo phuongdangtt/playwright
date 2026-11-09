@@ -6,4 +6,5 @@ export const profileLocators = {
     confirmOkButton: '#closeSmallModal-ok',
     deletedDialog: '.modal-content:has-text("Book deleted")',
     deletedOkButton: '#closeSmallModal-ok',
+    profileUsername: '#userName-value',
 };
