@@ -12,10 +12,8 @@ export class BookStorePage extends BasePage {
       await expect(this.page).toHaveURL(bookstoreData.bookstoreURL);
     }
 
-  async search(keyword) {
-    const searchBook = this.page.locator(bookstoreLocators.searchBox);
-    await expect(searchBook).toBeVisible();
-    await searchBook.fill(keyword);
+  async searchBook(keyword) {
+    await this.inputText(bookstoreLocators.searchBox, keyword);
   }
 
   async getBookTitles() {
@@ -28,5 +26,24 @@ export class BookStorePage extends BasePage {
       if (t !== '') titles.push(t);
     }
     return titles;
+  }
+
+  async waitForBookPresent(bookName, timeout = 5000) {
+    const bookTitleCells = this.page.locator(bookstoreLocators.bookTitleCells);
+    await expect(bookTitleCells).toContainText(bookName, { timeout });
+  }
+
+  // Assert that the bookstore results contain the specified book title.
+  async assertExpectedBookPresent(bookName) {
+    const bookTitleCells = this.page.locator(bookstoreLocators.bookTitleCells);
+    await expect(bookTitleCells).toContainText(bookName, { timeout: 5000 });
+  }
+
+  // Assert that the results include every title in expectedBooks; extra titles are allowed.
+  async assertExpectedBooksPresent(expectedBooks) {
+    const bookTitles = await this.getBookTitles();
+    expect(bookTitles).toEqual(
+      expect.arrayContaining(expectedBooks)
+    );
   }
 }

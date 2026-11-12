@@ -14,14 +14,12 @@ test.describe('Search book', () => {
     for (const keyword of bookstoreData.searchKeywords) {
       await test.step(`Search for "${keyword}"`, async () => {
         // Step 2.1: Search for the keyword
-        await bookstore.search(keyword);
+        await bookstore.searchBook(keyword);
         const bookTitles = await bookstore.getBookTitles();
         console.log(`Found ${bookTitles.length} books for keyword "${keyword}":`, bookTitles);
 
         // Step 2.2: Verify the expected books are present in the results
-        expect(bookTitles, `Results for "${keyword}"`).toEqual(
-          expect.arrayContaining(bookstoreData.expectedBooks)
-        );
+        await bookstore.assertExpectedBooksPresent(bookstoreData.expectedBooks);
       });
     }
   });

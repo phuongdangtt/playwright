@@ -5,54 +5,44 @@ import { profileLocators } from '../locator/ProfilePage.js';
 
 export class ProfilePage extends BasePage {
   async ensureOnProfile() {
-    await expect(this.page).toHaveURL(profileData.profileURL);
+    await this.ensureOnPage(profileData.profileURL);
   }
 
-  async reload() {
-    await this.page.reload();
+  async reloadProfilePage() {
+    await this.reload();
     await this.ensureOnProfile();
   }
 
   async searchBook(name) {
-    const searchBook = this.page.locator(profileLocators.searchBox);
-    await expect(searchBook).toBeVisible();
-    await searchBook.fill(name);
+    await this.inputText(profileLocators.searchBox, name);
   }
 
   async isBookPresent(name) {
-    const bookCell = this.page.locator(profileLocators.bookCell, { hasText: name });
-    const count = await bookCell.count();
-    return count > 0;
+    return this.isElementWithTextPresent(profileLocators.bookCell, name);
   }
 
-  async waitForBookPresent(name, timeout = 10000) {
-    const bookCell = this.page.locator(profileLocators.bookCell, { hasText: name });
-    await expect(bookCell).toBeVisible({ timeout });
+  async waitForBookPresent(name, timeout = 3000) {
+    await this.assertElementWithTextVisible(profileLocators.bookCell, name, { timeout });
   }
 
-  async waitForBookAbsent(name, timeout = 10000) {
-    const bookCell = this.page.locator(profileLocators.bookCell, { hasText: name });
-    await expect(bookCell).toHaveCount(0, { timeout });
+  async waitForBookAbsent(name, timeout = 3000) {
+    await this.waitForElementAbsent(profileLocators.bookCell, { timeout });
   }
 
   async deleteBook(name) {
-    const deleteButton = this.page.locator(profileLocators.deleteButton(name));
-    await deleteButton.click();
+    await this.clickElement(profileLocators.deleteButton(name));
   }
 
-  async confirmDelete(timeout = 5000) {
-    const confirmDialog = this.page.locator(profileLocators.confirmDialog);
-    const confirmOkButton = this.page.locator(profileLocators.confirmOkButton);
-    await expect(confirmDialog).toBeVisible({ timeout });
-    await confirmOkButton.click();
+  async confirmDeleteBook(timeout = 5000) {
+    await this.assertElementVisible(profileLocators.confirmDialog, { timeout });
+    await this.clickElement(profileLocators.confirmOkButton);
   }
 
   async waitForDeletedDialog(timeout) {
-    const deletedDialog = this.page.locator(profileLocators.deletedDialog);
     try {
-      await expect(deletedDialog).toBeVisible({ timeout });
-      const okButton = this.page.locator(profileLocators.deletedOkButton);
-      await okButton.click();
+      await this.assertElementVisible(profileLocators.deletedDialog, { timeout });
+      await this.assertElementVisible(profileLocators.deletedOkButton, { timeout });
+      await this.clickElement(profileLocators.deletedOkButton);
       return true;
     } catch {
       return false;
@@ -60,9 +50,8 @@ export class ProfilePage extends BasePage {
   }
 
   async getDisplayedUsername() {
-    const usernameLocator = this.page.locator(profileLocators.profileUsername);
-    await expect(usernameLocator).toBeVisible();
-    return await usernameLocator.textContent();
+    await this.assertElementVisible(profileLocators.profileUsername);
+    return await this.getElementText(profileLocators.profileUsername);
   }
 
   async verifyUsernameDisplayed(expectedUsername) {
